@@ -1,0 +1,75 @@
+#the last equation that doesnt have a coeffient a.k.a the 1: coefficient terms
+last_eq = expr1.copy()
+for k in range(0, 4):
+    for l in range(1, 4):
+        last_eq = last_eq.subs( sym1[k, l], 0 )
+last_eq
+
+lista1 = []
+for k in range(0, 4):
+    for l in range(1, 4):
+        #substract the last_eq every time because we dont need it sitting at the bac
+        #every time
+        expr_zer = expr1.copy() - last_eq
+        for i in range(0, 4):
+            for j in range(1, 4):
+                #substitute all coefficient with 0
+                #except the one we are interested in
+                if sym1[i, j] != sym1[k, l]:
+                    expr_zer = expr_zer.subs( sym1[i, j], 0 )
+        #replace the coefficient we are interested in with 1
+        #to obtain a clean final expression
+        expr_zer = expr_zer.subs( sym1[k, l], 1 )
+        #substitute the last fractal derivatives 
+        expr_zer = subs_der(expr_zer)
+        lista1.append(expr_zer)
+#don't forget the last_eq!
+lista1.append(subs_der(last_eq))
+#in one case scenario we generate a 0 because one coefficient doesnt show up at all
+#so 0 comes out
+lista1.remove(0)
+
+
+
+global t, x, y, z; t, x, y, z, c = sp.symbols("t x y z c")
+
+global u1; u1 = sp.Function("u_1")(t, x, y, z)
+global u2; u2 = sp.Function("u_2")(t, x, y, z)
+global w1; w1 = sp.Function("w_1")(t, x, y, z)
+global w2; w2 = sp.Function("w_2")(t, x, y, z)
+
+global I2; I2 = sp.Matrix([[1, 0], [0, 1]])
+global sx; sx = sp.Matrix([[0, 1], [1, 0]])
+global sy; sy = sp.Matrix([[0, -sp.I], [sp.I, 0]])
+global sz; sz = sp.Matrix([[1, 0], [0, -1]])
+
+#these are the ξ^i basically
+global τ; τ = sp.Function("τ")(t, x, y, z, u1, u2, w1, w2)
+global ξ; ξ = sp.Function("ξ")(t, x, y, z, u1, u2, w1, w2)
+global γ; γ = sp.Function("γ")(t, x, y, z, u1, u2, w1, w2)
+global ζ; ζ = sp.Function("ζ")(t, x, y, z, u1, u2, w1, w2)
+
+#these are the u^a basically
+global φ; φ = sp.Function("φ")(t, x, y, z, u1, u2, w1, w2)
+global χ; χ = sp.Function("χ")(t, x, y, z, u1, u2, w1, w2)
+global ψ; ψ = sp.Function("ψ")(t, x, y, z, u1, u2, w1, w2)
+global ω; ω = sp.Function("ω")(t, x, y, z, u1, u2, w1, w2)
+
+
+
+dicti = { 
+    sym2[3, 0]: sym2[0, 3],
+    sym2[3, 3]: sym2[0, 0],
+    sym2[2, 2]: sym2[0, 0],
+    sym2[2, 0]: sym2[0 ,2],
+    sym2[1, 0]: sym2[0, 1],
+    sym2[1, 1]: sym2[0, 0],
+    #φu1 - ψw1
+    sym2[4, 4]: sym2[6, 6],
+    sym2[4, 5]: sym2[6, 7],
+    sym2[4, 7]: -1*sym2[6, 5],
+    #χu1
+    sym2[5, 4]: sym2[7, 6],
+    sym2[5, 6]: -1*sym2[7, 4],
+    sym2[5, 5]: sym2[7, 7],
+}
